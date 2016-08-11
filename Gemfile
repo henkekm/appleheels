@@ -25,6 +25,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'haml'
 gem 'friendly_id', '~> 5.1.0' # Note: You MUST use 5.0.0 or greater for Rails 4.0+
+gem 'pry' # for debugging
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

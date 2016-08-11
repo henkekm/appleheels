@@ -5,7 +5,8 @@
 
 / = form_for @game_instance, method: :put, remote: true do |f|
 /   = f.submit "Increment"
-
+- if flash[:notice]
+  = flash[:notice]
 #gamerails
 - if @game_instance.status == "won"
   = image_tag("trophy.jpg")

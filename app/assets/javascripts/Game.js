@@ -36,7 +36,11 @@ Appleheels.Game.prototype = {
 
     this.cursor = this.input.keyboard.createCursorKeys();
 
-    this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
+    this.scoreKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
+
+    this.killMe = this.input.keyboard.addKey(Phaser.Keyboard.D);
+
+    this.healMe = this.input.keyboard.addKey(Phaser.Keyboard.H);
 
     this.player = this.add.sprite(70, 100, 'player');
 
@@ -48,10 +52,11 @@ Appleheels.Game.prototype = {
       this.walls.add(wall);
       wall.body.immovable = true;
     }
+    this.gameHp = 100
 
-	},
+  },
 
-	update: function () {
+  update: function () {
 
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
@@ -70,12 +75,44 @@ Appleheels.Game.prototype = {
       console.log(this.player.body.velocity);
     }
 
-    if (this.score_key.isDown){
+    if (this.killMe.isDown) {
+      this.gameHp = this.gameHp - 1
+      console.log(this.gameHp)
+    }
+
+    if (this.healMe.isDown) {
+      this.gameHp = this.gameHp + 1
+      console.log(this.gameHp)
+    }
+
+    if (this.scoreKey.isDown) {
       $.ajax({
         url: "/game/" + this.game.gameId,
         type: "PUT",
         data: "",
         success: function(response) {
+        }
+      });
+    }
+
+    if (this.gameHp === 0) {
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: {game_instance: { status: 'won' } },
+        success: function(response) {
+          console.log(response)
+        }
+      });
+    }
+
+    if (this.gameHp === 1000) {
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: {game_instance: { status: 'lost' } },
+        success: function(response) {
+          console.log(response)
         }
       });
     }
