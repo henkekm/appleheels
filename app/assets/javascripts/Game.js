@@ -67,6 +67,14 @@ Appleheels.Game.prototype = {
       this.player.body.velocity.y = -250;
       console.log(this.player.body.velocity);
     }
+    $.ajax({
+      url: "/game/" + this.game.gameId,
+      type: "PUT",
+      data: "",
+      success: function(response) {
+        console.log("ajax success");
+      }
+    });
 
     // Player COLLIDE with walls
     this.physics.arcade.collide(this.player, this.walls);
