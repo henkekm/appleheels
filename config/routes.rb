@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'home#index'
 
-  resources :game_instances, path: "game", only: [:create, :show, :update]
-
+  resources :game_instances, path: "game", only: [:create, :show, :update] do
+    collection do
+      get :random
+    end
+  end
 end
