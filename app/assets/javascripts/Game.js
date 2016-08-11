@@ -36,6 +36,8 @@ Appleheels.Game.prototype = {
 
     this.cursor = this.input.keyboard.createCursorKeys();
 
+    this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
+
     this.player = this.add.sprite(70, 100, 'player');
 
     this.player.body.gravity.y = 100;
@@ -67,14 +69,16 @@ Appleheels.Game.prototype = {
       this.player.body.velocity.y = -250;
       console.log(this.player.body.velocity);
     }
-    $.ajax({
-      url: "/game/" + this.game.gameId,
-      type: "PUT",
-      data: "",
-      success: function(response) {
-        console.log("ajax success");
-      }
-    });
+
+    if (this.score_key.isDown){
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: "",
+        success: function(response) {
+        }
+      });
+    }
 
     // Player COLLIDE with walls
     this.physics.arcade.collide(this.player, this.walls);
