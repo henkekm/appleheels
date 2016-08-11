@@ -3,7 +3,8 @@ class GameInstancesController < ApplicationController
   before_action :find_game_instance, only: [:show, :update]
 
   def create
-    @game_instance = GameInstance.create(name: unique_game_name)
+    @game_instance = GameInstance.create(name: unique_game_name,
+                                         status: "playing")
     redirect_to @game_instance
   end
 
