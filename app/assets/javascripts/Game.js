@@ -64,6 +64,7 @@ Appleheels.Game.prototype = {
     if (this.cursor.up.isDown) {
       console.log(this.player.body.touching);
       console.log(this.player.body.velocity);
+      this.player.body.bounce.y = 0.2;
       this.player.body.velocity.y = -250;
       console.log(this.player.body.velocity);
     }
