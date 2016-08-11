@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Appleheels</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  <meta charset="UTF-8" />
+  <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+  <script src="assets/Boot.js"></script>
+  <script src="assets/Preloader.js"></script>
+  <script src="assets/MainMenu.js"></script>
+  <script src="assets/Game.js"></script>  
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>
