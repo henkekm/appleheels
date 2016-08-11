@@ -1,19 +1,20 @@
 
 Appleheels.Game = function (game) {
 
-    // this.land;
-    // this.cities;
-    // this.plane;
-    // this.bomb;
-    // this.score;
-    // this.scoreText;
+  this.player;
+  this.wall;
+  this.walls;
+  this.coin;
+  this.coins;
+  this.enemy;
+  this.enemies;
+  this.cursor;
+  // this.score;
+  // this.scoreText;
 
-    // this.emitter;
-    this.gameLost;
-    this.gameWon;
-    // this.speed;
-    // this.droppedThisRun;
-    // this.heights;
+  // this.emitter;
+  this.gameLost;
+  this.gameWon;
 
 };
 
@@ -21,213 +22,105 @@ Appleheels.Game.prototype = {
 
 	create: function () {
 
-        // this.cities = [];
-        // this.heights = [ 2, 3, 3, 3, 4, 4, 5, 5, 5, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 12, 14, 14 ];
-        this.gameLost = false;
-        this.gameWon = false;
-        this.stage.backgroundColor = '#336699';
-        // this.speed = 100;
-        // this.droppedThisRun = false;
+    this.walls = this.add.group();
+    this.coins = this.add.group();
+    this.enemies = this.add.group();
 
-        // this.stage.smoothed = false;
+    this.gameLost = false;
+    this.gameWon = false;
+    this.stage.backgroundColor = '#336699';
 
-        // this.physics.startSystem(Phaser.Physics.ARCADE);
+    this.physics.startSystem(Phaser.Physics.ARCADE);
 
-        // this.add.image(0, 0, 'sky');
+    this.world.enableBody = true;
 
-        // this.land = this.add.sprite(0, 336, 'land');
+    this.cursor = this.input.keyboard.createCursorKeys();
 
-        // this.bomb = this.add.sprite(0, 0, 'bomb');
-        // this.bomb.visible = false;
+    this.player = this.add.sprite(70, 100, 'player');
 
-        // this.plane = this.add.sprite(-21, 16, 'plane');
-        // this.plane.anchor.set(0.5, 0);
-        // this.plane.checkWorldBounds = true;
-        // this.plane.events.onOutOfBounds.add(this.planeLeft, this);
+    this.player.body.gravity.y = 100;
 
-        // this.physics.arcade.enable( [ this.plane, this.bomb, this.land ] );
-
-        // this.plane.body.allowGravity = false;
-        // this.plane.body.velocity.x = 100;
-
-        // this.bomb.checkWorldBounds = true;
-
-        // this.heights = Phaser.Utils.shuffle(this.heights);
-
-        // for (var i = 0; i < this.heights.length; i++)
-        // {
-        //     this.cities.push(new Appleheels.City(this.game, 48 + i * 16, this.heights[i]));
-        // }
-
-        // this.emitter = this.add.emitter(0, 0, 500);
-
-        // this.physics.arcade.bounds.setTo(0, 0, this.game.world.width, 336);
-        // this.physics.arcade.checkCollision = { up: false, down: true, left: false, right: false };
-
-        // this.emitter.makeParticles('particles', [0,1,2,3,4], 500, true, true);
-        // this.emitter.gravity = 200;
-        // this.emitter.bounce.set(0.25);
-        // this.emitter.setXSpeed(-200, 200);
-        // this.emitter.setYSpeed(-50, 50);
-
-        // this.score = 0;
-        // this.scoreText = this.add.bitmapText(8, 360, 'rollingThunder', 'score: 0', 16);
-
-        // this.add.image(390, 360, 'photonstorm');
-
-        // this.input.onDown.add(this.dropBomb, this);
+    // Create floor
+    for (var i = 0; i < 26; i++) {
+      var wall = this.add.sprite(20*i, 364, 'wall')
+      this.walls.add(wall);
+      wall.body.immovable = true;
+    }
 
 	},
-
-    // planeLeft: function () {
-
-    //     if (this.gameWon)
-    //     {
-    //         this.plane.body.velocity.x = 0;
-
-    //         if (this.plane.body.facing === Phaser.LEFT)
-    //         {
-    //             this.plane.scale.x = 1;
-    //         }
-    //         else
-    //         {
-    //             this.plane.scale.x = -1;
-    //         }
-
-    //         var tween = this.add.tween(this.plane).to( { x: 256, y: 320 }, 2000, Phaser.Easing.Cubic.Out, true);
-    //         tween.onComplete.add(this.gameOver, this);
-    //     }
-    //     else
-    //     {
-    //         this.speed += 1;
-    //         this.plane.y += 4;
-    //         this.droppedThisRun = false;
-
-    //         if (this.plane.body.facing === Phaser.LEFT)
-    //         {
-    //             this.plane.scale.x = 1;
-    //             this.plane.body.velocity.x = this.speed;
-    //         }
-    //         else
-    //         {
-    //             this.plane.scale.x = -1;
-    //             this.plane.body.velocity.x = -this.speed;
-    //         }
-    //     }
-
-    // },
-
-    // dropBomb: function () {
-
-    //     if (this.droppedThisRun)
-    //     {
-    //         return;
-    //     }
-
-    //     this.droppedThisRun = true;
-
-    //     this.bomb.x = this.game.math.snapToFloor(this.plane.x, 16) + 2;
-    //     this.bomb.y = this.plane.y + 8;
-    //     this.bomb.body.gravity.y = 200;
-    //     this.bomb.body.velocity.y = 100;
-    //     this.bomb.visible = true;
-
-    // },
-
-    // removeBomb: function () {
-
-    //     this.bomb.reset(0, 0);
-    //     this.bomb.body.gravity.y = 0;
-    //     this.bomb.body.velocity.y = 0;
-    //     this.bomb.visible = false;
-
-    // },
 
 	update: function () {
 
-        // this.scoreText.text = 'score:' + this.score;
+    // MOVE left and right by pressing left and right keys
+    if (this.cursor.left.isDown) {
+      this.player.body.velocity.x = -200;
+    } else if (this.cursor.right.isDown) {
+      this.player.body.velocity.x = 200;
+    } else {
+      this.player.body.velocity.x = 0;
+    }
 
-        // if (this.gameLost || this.gameWon)
-        // {
-        //     return;
-        // }
+    // JUMP by pressing the up key
+    if (this.cursor.up.isDown) {
+      console.log(this.player.body.touching);
+      console.log(this.player.body.velocity);
+      this.player.body.velocity.y = -250;
+      console.log(this.player.body.velocity);
+    }
 
-        // for (var i = 0; i < this.cities.length; i++)
-        // {
-        //     if (this.cities[i].alive)
-        //     {
-        //         this.physics.arcade.overlap(this.plane, this.cities[i].top, this.planeSmash, null, this);
-        //     }
-        // }
+    // Player COLLIDE with walls
+    this.physics.arcade.collide(this.player, this.walls);
 
-        // if (this.bomb.visible)
-        // {
-        //     for (var i = 0; i < this.cities.length; i++)
-        //     {
-        //         if (this.cities[i].alive)
-        //         {
-        //             this.physics.arcade.overlap(this.bomb, this.cities[i].top, this.cities[i].hit, null, this.cities[i]);
-        //         }
-        //     }
+    // this.scoreText.text = 'score:' + this.score;
 
-        //     this.physics.arcade.overlap(this.bomb, this.land, this.removeBomb, null, this);
-        // }
+    // if (this.gameLost || this.gameWon)
+    // {
+    //   return;
+    // }
+
+    // for (var i = 0; i < this.cities.length; i++)
+    // {
+    //   if (this.cities[i].alive)
+    //   {
+    //     this.physics.arcade.overlap(this.plane, this.cities[i].top, this.planeSmash, null, this);
+    //   }
+    // }
+
+    // if (this.bomb.visible)
+    // {
+    //   for (var i = 0; i < this.cities.length; i++)
+    //   {
+    //     if (this.cities[i].alive)
+    //     {
+    //       this.physics.arcade.overlap(this.bomb, this.cities[i].top, this.cities[i].hit, null, this.cities[i]);
+    //     }
+    //   }
+
+    //   this.physics.arcade.overlap(this.bomb, this.land, this.removeBomb, null, this);
+    // }
 
 	},
 
-    // planeSmash: function () {
+  gameOver: function () {
 
-    //     this.gameLost = true;
+    if (this.gameWon)
+    {
+        var t = this.add.bitmapText (0, 128, 'rollingThunder', 'GAME WON', 32);
+    }
+    else
+    {
+        var t = this.add.bitmapText (0, 64, 'rollingThunder', 'GAME LOST', 32);
+    }
 
-    //     this.plane.body.velocity.x = 0;
+    t.x = 256 - (t.textWidth / 2);
 
-    //     this.emitter.x = this.plane.x;
-    //     this.emitter.y = this.plane.y;
-    //     this.emitter.start(true, 2000, null, 64);
+    this.input.onDown.add (this.quitGame, this);
 
-    //     var tween = this.add.tween(this.plane).to( { y: 320 }, 2000, Phaser.Easing.Exponential.In, true);
-    //     tween.onComplete.add(this.gameOver, this);
-
-    //     this.input.onDown.remove(this.dropBomb, this);
-
-    // },
-
-    // deadCities: function () {
-
-    //     for (var i = 0; i < this.cities.length; i++)
-    //     {
-    //         if (this.cities[i].alive)
-    //         {
-    //             return;
-    //         }
-    //     }
-
-    //     //  Got this far? Then they're all dead Jim ...
-    //     this.gameWon = true;
-    //     this.input.onDown.remove(this.dropBomb, this);
-
-    // },
-
-    gameOver: function () {
-
-        if (this.gameWon)
-        {
-            var t = this.add.bitmapText(0, 128, 'rollingThunder', 'GAME WON', 32);
-        }
-        else
-        {
-            var t = this.add.bitmapText(0, 64, 'rollingThunder', 'GAME LOST', 32);
-        }
-
-        t.x = 256 - (t.textWidth / 2);
-
-        this.input.onDown.add(this.quitGame, this);
-
-    },
+  },
 
 	quitGame: function () {
 
-		this.state.start('MainMenu');
+		this.state.start ('MainMenu');
 
 	}
 

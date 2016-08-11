@@ -16,6 +16,11 @@ Appleheels.Preloader.prototype = {
 
 		this.load.setPreloadSprite(this.preloadBar);
 
+		this.load.image('player', 'images/player.png');
+		this.load.image('enemy', 'images/enemy.png');
+		this.load.image('coin', 'images/coin.png');
+		this.load.image('wall', 'images/wall.png');
+
 		this.load.bitmapFont('rollingThunder', 'images/rolling-thunder.png', 'images/rolling-thunder.xml');
 
 	},
