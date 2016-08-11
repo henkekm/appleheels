@@ -53,7 +53,6 @@ Appleheels.Game.prototype = {
       wall.body.immovable = true;
     }
     this.gameHp = 100
-
   },
 
   update: function () {
@@ -96,6 +95,9 @@ Appleheels.Game.prototype = {
     }
 
     if (this.gameHp === 0) {
+      this.gameWon = true;
+      this.gameOver();
+      console.log(this.gameWon);
       $.ajax({
         url: "/game/" + this.game.gameId,
         type: "PUT",
@@ -107,6 +109,8 @@ Appleheels.Game.prototype = {
     }
 
     if (this.gameHp === 1000) {
+      this.gameWon = false;
+      this.gameOver();
       $.ajax({
         url: "/game/" + this.game.gameId,
         type: "PUT",
@@ -151,7 +155,6 @@ Appleheels.Game.prototype = {
 	},
 
   gameOver: function () {
-
     if (this.gameWon)
     {
         var t = this.add.bitmapText (0, 128, 'rollingThunder', 'GAME WON', 32);
