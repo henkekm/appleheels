@@ -16,6 +16,14 @@ class GameInstancesController < ApplicationController
     render js: "$('#game-score').html('#{@game_instance.test_value}')"
   end
 
+  def random
+    if GameInstance.any?
+      redirect_to GameInstance.all.sample
+    else
+      redirect_to root_path
+    end
+  end
+
   private
   def find_game_instance
     @game_instance = GameInstance.friendly.find(params[:id])
