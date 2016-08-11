@@ -16,12 +16,12 @@ Appleheels.Preloader.prototype = {
 
 		this.load.setPreloadSprite(this.preloadBar);
 
-		this.load.image('player', '/assets/player.png');
-		this.load.image('enemy', '/assets/enemy.png');
-		this.load.image('coin', '/assets/coin.png');
-		this.load.image('wall', '/assets/wall.png');
+		this.load.image('player', "<%= asset_path 'player.png' %>");
+		this.load.image('enemy', "<%= asset_path 'enemy.png' %>");
+		this.load.image('coin', "<%= asset_path 'coin.png' %>");
+		this.load.image('wall', "<%= asset_path 'wall.png' %>");
 
-		this.load.bitmapFont('rollingThunder', '/assets/rolling-thunder.png', '/assets/rolling-thunder.xml');
+		this.load.bitmapFont('rollingThunder', "<%= asset_path 'rolling-thunder.png' %>", "<%= asset_path 'rolling-thunder.xml' %>");
 
 	},
 

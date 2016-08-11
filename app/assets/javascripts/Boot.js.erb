@@ -17,9 +17,7 @@ Appleheels.Boot = function (game) {
 Appleheels.Boot.prototype = {
 
     preload: function () {
-
-        this.load.image('preloaderBar', '/assets/preload.png');
-
+        this.load.image('preloaderBar', "<%= asset_path 'preload.png' %>");
     },
 
     create: function () {
