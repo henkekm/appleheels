@@ -25,5 +25,27 @@
         game.state.start('Boot');
 
         game.gameId = "#{@game_instance.id}";
+        game.bounce = "#{@game_instance.game_attribute.bounce}"
+        game.x_velocity = "#{@game_instance.game_attribute.x_velocity}"
+        game.y_velocity = "#{@game_instance.game_attribute.y_velocity}"
+        game.y_gravity = "#{@game_instance.game_attribute.y_gravity}"
+        game.angle = "#{@game_instance.game_attribute.angle}"
+        game.sprite = "#{@game_instance.game_attribute.sprite}"
 
-      })();
+    })();
+
+  .change-attributes
+    = form_for @game_instance.game_attribute, url: game_instance_path(@game_instance.id), method: :put, remote: true do |f|
+      = f.label :bounce, "Bounce"
+      = f.text_field :bounce
+      = f.label :x_velocity, "X Velocity"
+      = f.text_field :x_velocity
+      = f.label :y_velocity, "Y Velocity"
+      = f.text_field :y_velocity
+      = f.label :y_gravity, "Y Gravity"
+      = f.text_field :y_gravity
+      = f.label :angle, "Angle"
+      = f.text_field :angle
+      = f.label :sprite, "Sprite"
+      = f.text_field :sprite
+      = f.submit "Change Attributes"

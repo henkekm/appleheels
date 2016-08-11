@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  x-velocity: 1
+  y-velocity: 1
+  bounce: 1
+  y-gravity: 1
+  angle_integer: MyString
+  sprite: MyString
+
+two:
+  x-velocity: 1
+  y-velocity: 1
+  bounce: 1
+  y-gravity: 1
+  angle_integer: MyString
+  sprite: MyString
