@@ -159,9 +159,12 @@ Appleheels.Game.prototype = {
     }
 
     // DIG by pressing the down key
-    if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
-      this.game.physics.arcade.collide(this.player, this.walls, destroyWall(this.player, this.walls.children[0]), processHandler);
-      console.log(this.walls.children[0]);
+    if (this.game.downMethod == "dig") {
+      if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+        console.log("hello", this.game.physics.arcade.overlap(this.player, this.wall))
+        this.game.physics.arcade.collide(this.player, this.walls, destroyWall, processHandler);
+        console.log(this.walls.children[0]);
+      }
     }
 
     // JUMP by pressing the jumpButton key
@@ -188,12 +191,8 @@ Appleheels.Game.prototype = {
 
     if (this.gameWon)
     {
-        var t = this.add.bitmapText (0, 128, 'rollingThunder', 'GAME WON', 32);
-        $.ajax({
-          url: "/game/" + this.game.gameId,
-          type: "PUT",
-          data: {game_instance: { status: "won" } },
-        });
+      var t = this.add.bitmapText (0, 128, 'rollingThunder', 'GAME WON', 32);
+      this.time.events.add(Phaser.Timer.SECOND * 2, this.setDeadStatus, this);
     }
     else
     {
@@ -204,6 +203,14 @@ Appleheels.Game.prototype = {
 
     this.input.onDown.add (this.quitGame, this);
 
+  },
+
+  setDeadStatus: function() {
+    $.ajax({
+      url: "/game/" + this.game.gameId,
+      type: "PUT",
+      data: {game_instance: { status: "won" } },
+    });
   },
 
   quitGame: function () {
