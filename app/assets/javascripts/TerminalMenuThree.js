@@ -1,5 +1,5 @@
 
-Appleheels.TerminalMenu = function(game) {
+Appleheels.TerminalMenuThree = function(game) {
 
   this.cursor;
   this.backButton;
@@ -9,7 +9,7 @@ Appleheels.TerminalMenu = function(game) {
 
 };
 
-Appleheels.TerminalMenu.prototype = {
+Appleheels.TerminalMenuThree.prototype = {
 
   margin: {
     top: 20,
@@ -19,7 +19,7 @@ Appleheels.TerminalMenu.prototype = {
   },
 
   terminalText: {
-    color: 0x15B93C
+    color: 0xE81717
   },
 
   getFavoriteNum: function () {
