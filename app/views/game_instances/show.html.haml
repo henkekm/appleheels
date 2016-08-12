@@ -28,5 +28,12 @@
         game.state.start('Boot');
 
         game.gameId = "#{@game_instance.id}";
+        game.jumpPower = "#{@game_instance.jump_power}";
+        game.downMethod = "#{@game_instance.down_method}";
+        game.objectives = "#{@game_instance.objectives}";
+
 
       })();
+= @game_instance.jump_power
+= @game_instance.down_method
+= @game_instance.objectives

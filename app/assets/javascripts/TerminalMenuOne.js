@@ -31,11 +31,11 @@ Appleheels.TerminalMenuOne.prototype = {
   },
 
   getJumpPower: function () {
-    return Appleheels.jumpPower;
+    return (this.game.jumpPower);
   },
 
   setJumpPower: function (num) {
-    Appleheels.jumpPower = num;
+    this.game.jumpPower = num;
   },
 
   init: function () {
@@ -101,7 +101,7 @@ Appleheels.TerminalMenuOne.prototype = {
   update: function () {
     // Press RIGHT to increment value
     if (this.cursor.right.isDown) {
-      this.setJumpPower (this.getJumpPower() + 1);
+      this.setJumpPower (this.game.jumpPower + 1);
 
       this.jumpPowerDisplay.text = String(this.getJumpPower());
 
@@ -110,7 +110,7 @@ Appleheels.TerminalMenuOne.prototype = {
     };
     // Press LEFT to decrement value
     if (this.cursor.left.isDown) {
-      this.setJumpPower (this.getJumpPower() - 1);
+      this.setJumpPower (this.game.jumpPower - 1);
       this.jumpPowerDisplay.text = String(this.getJumpPower());
 
       this.jumpPowerDisplay.x = 512 - (this.jumpPowerDisplay.textWidth + this.margin.right);
@@ -120,7 +120,11 @@ Appleheels.TerminalMenuOne.prototype = {
     if (this.backButton.isDown) {
       console.log("EXIT");
       console.log("JumpPower", this.getJumpPower());
-
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: {game_instance: { jump_power: this.getJumpPower() } },
+      });
       this.state.start('Game');
     };
 

@@ -12,7 +12,8 @@ class GameInstancesController < ApplicationController
   end
 
   def update
-    @game_instance.increment!(:test_value, 1)
+    @game_instance.update_attributes(game_params)
+    # @game_instance.increment!(:test_value, 1)
     render js: "$('#game-score').html('#{@game_instance.test_value}')"
   end
 
@@ -25,6 +26,10 @@ class GameInstancesController < ApplicationController
   end
 
   private
+
+  def game_params
+    params.require(:game_instance).permit(:jump_power, :down_method, :status, :objectives)
+  end
   def find_game_instance
     @game_instance = GameInstance.friendly.find(params[:id])
   end
