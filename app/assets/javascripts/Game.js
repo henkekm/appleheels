@@ -52,6 +52,8 @@ Appleheels.Game.prototype = {
 	},
 
 	update: function () {
+    // Player COLLIDE with walls
+    this.physics.arcade.collide(this.player, this.walls);
 
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
@@ -63,7 +65,7 @@ Appleheels.Game.prototype = {
     }
 
     // JUMP by pressing the up key
-    if (this.cursor.up.isDown) {
+    if (this.cursor.up.isDown && this.player.body.touching.down) {
       console.log(this.player.body.touching);
       console.log(this.player.body.velocity);
       this.player.body.velocity.y = -250;
@@ -80,8 +82,6 @@ Appleheels.Game.prototype = {
       });
     }
 
-    // Player COLLIDE with walls
-    this.physics.arcade.collide(this.player, this.walls);
 
     // this.scoreText.text = 'score:' + this.score;
 
