@@ -8,7 +8,9 @@ Appleheels.Game = function (game) {
   this.coins;
   this.enemy;
   this.enemies;
+  this.terminal;
   this.cursor;
+  this.jumpButton;
   // this.score;
   // this.scoreText;
 
@@ -35,19 +37,38 @@ Appleheels.Game.prototype = {
     this.world.enableBody = true;
 
     this.cursor = this.input.keyboard.createCursorKeys();
+    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+    // Place terminal
+    this.terminal = this.add.sprite(340, 216, 'terminal');
 
     this.player = this.add.sprite(70, 100, 'player');
+    this.physics.arcade.enable(this.player);
+    this.player.body.collideWorldBounds = true;
+    this.player.body.gravity.y = 500;
 
-    this.player.body.gravity.y = 100;
-
-    // Create floor
+    // Place floor
     for (var i = 0; i < 26; i++) {
-      var wall = this.add.sprite(20*i, 364, 'wall')
+      var wall = this.add.sprite(20*i, 364, 'wall');
       this.walls.add(wall);
       wall.body.immovable = true;
     }
 
+    // Place platform
+    for (var i = 0; i < 15; i++) {
+      var wall = this.add.sprite(100+20*i, 256, 'wall');
+      this.walls.add(wall);
+      wall.body.immovable = true;
+    }
+
+
 	},
+
+  useTerminal: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL");
+    }
+  },
 
 	update: function () {
 
@@ -60,16 +81,16 @@ Appleheels.Game.prototype = {
       this.player.body.velocity.x = 0;
     }
 
-    // JUMP by pressing the up key
-    if (this.cursor.up.isDown) {
-      console.log(this.player.body.touching);
-      console.log(this.player.body.velocity);
-      this.player.body.velocity.y = -250;
-      console.log(this.player.body.velocity);
-    }
-
     // Player COLLIDE with walls
-    this.physics.arcade.collide(this.player, this.walls);
+    this.game.physics.arcade.collide(this.player, this.walls);
+
+    // Player OVERLAP with terminal
+    this.game.physics.arcade.overlap(this.player, this.terminal, this.useTerminal, null, this);
+
+    // JUMP by pressing the jumpButton key
+    if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+      this.player.body.velocity.y = -350;
+    }
 
     // this.scoreText.text = 'score:' + this.score;
 
