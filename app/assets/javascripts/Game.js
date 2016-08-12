@@ -38,7 +38,6 @@ Appleheels.Game.prototype = {
 
     this.cursor = this.input.keyboard.createCursorKeys();
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
     // Place terminal
     this.terminal = this.add.sprite(340, 216, 'terminal');
