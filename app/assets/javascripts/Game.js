@@ -41,8 +41,10 @@ Appleheels.Game.prototype = {
 
     // Place terminal
     this.terminal = this.add.sprite(340, 216, 'terminal');
+    this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
 
     this.player = this.add.sprite(70, 100, 'player');
+
     this.physics.arcade.enable(this.player);
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
@@ -81,6 +83,15 @@ Appleheels.Game.prototype = {
       this.player.body.velocity.x = 0;
     }
 
+    if (this.score_key.isDown){
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: "",
+        success: function(response) {
+        }
+      });
+    }
     // Player COLLIDE with walls
     this.game.physics.arcade.collide(this.player, this.walls);
 

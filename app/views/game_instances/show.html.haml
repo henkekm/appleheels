@@ -1,6 +1,6 @@
 / %h1= @game_instance.name
 / %h3
-/   %span Your score is 
+/   %span Your score is
 /   %span#game-score= @game_instance.test_value
 
 / = form_for @game_instance, method: :put, remote: true do |f|
@@ -16,12 +16,14 @@
   :javascript
     (function () {
         var game = new Phaser.Game(512, 384, Phaser.CANVAS, 'game');
-    
+
         game.state.add('Boot', Appleheels.Boot);
         game.state.add('Preloader', Appleheels.Preloader);
         game.state.add('MainMenu', Appleheels.MainMenu);
         game.state.add('Game', Appleheels.Game);
-    
+
         game.state.start('Boot');
-    
+
+        game.gameId = "#{@game_instance.id}";
+
       })();
