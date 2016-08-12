@@ -8,7 +8,9 @@ Appleheels.Game = function (game) {
   this.coins;
   this.enemy;
   this.enemies;
-  this.terminal;
+  this.terminalOne;
+  this.terminalTwo;
+  this.terminalThree;
   this.cursor;
   this.jumpButton;
   // this.score;
@@ -39,13 +41,24 @@ Appleheels.Game.prototype = {
     this.cursor = this.input.keyboard.createCursorKeys();
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    // Place terminal
-    this.terminal = this.add.sprite(340, 216, 'terminal');
+    // Place terminal 1
+    this.terminalOne = this.add.sprite(340, 216, 'terminalOne');
+
+    // Place terminal 2
+    this.terminalTwo = this.add.sprite(40, -324, 'terminalTwo');
+
+    // Place terminal 3 TEMPORARILY INACCESSIBLE
+    this.terminalThree = this.add.sprite(600, 600, 'terminalThree');
+
+    // Adds temp score key
     this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
 
-    this.player = this.add.sprite(70, 100, 'player');
+    // Place player
+    this.player = this.add.sprite(70, 344, 'player');
 
-    this.physics.arcade.enable(this.player);
+    this.physics.arcade.enable (this.player);
+    this.game.world.setBounds (0, -384, 512, 768);
+    this.game.camera.position.y = 0;
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
 
@@ -62,16 +75,37 @@ Appleheels.Game.prototype = {
       this.walls.add(wall);
       wall.body.immovable = true;
     }
+    // Place sky platform
+    for (var i = 0; i < 5; i++) {
+      var wall = this.add.sprite(20+20*i, -284, 'wall');
+      this.walls.add(wall);
+      wall.body.immovable = true;
+    }
 
 
 	},
 
-  useTerminal: function () {
+  useTerminalOne: function () {
     if (this.cursor.up.isDown) {
-      console.log("TERMINAL");
-      console.log("favoriteNum", this.getFavoriteNum());
+      console.log("TERMINAL 1");
 
-      this.state.start('TerminalMenu');
+      this.state.start('TerminalMenuOne');
+    }
+  },
+
+  useTerminalTwo: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL 2");
+
+      this.state.start('TerminalMenuTwo');
+    }
+  },
+
+  useTerminalThree: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL 3");
+
+      this.state.start('TerminalMenuThree');
     }
   },
 
@@ -114,13 +148,28 @@ Appleheels.Game.prototype = {
     // Player COLLIDE with walls
     this.game.physics.arcade.collide(this.player, this.walls);
 
-    // Player OVERLAP with terminal
-    this.game.physics.arcade.overlap(this.player, this.terminal, this.useTerminal, null, this);
+    // Player OVERLAP with terminalOne
+    this.game.physics.arcade.overlap(this.player, this.terminalOne, this.useTerminalOne, null, this);
+
+    // Player OVERLAP with terminalTwo
+    this.game.physics.arcade.overlap(this.player, this.terminalTwo, this.useTerminalTwo, null, this);
+
+    // Player OVERLAP with terminalThree
+    this.game.physics.arcade.overlap(this.player, this.terminalThree, this.useTerminalThree, null, this);
 
     // JUMP by pressing the jumpButton key
     if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
       this.player.body.velocity.y = this.getJumpPower();
     }
+
+    // PAN camera according to player's y position
+
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
+    // this.game.camera.atLimit = true;
+    // if (this.game.camera.position.y > 0) {
+    //   this.game.camera.position.y = 0;
+    // }
+
 
     // this.scoreText.text = 'score:' + this.score;
 
@@ -151,6 +200,12 @@ Appleheels.Game.prototype = {
     // }
 
 	},
+
+  render: function() {
+
+    this.game.debug.cameraInfo(this.game.camera, 32, 32);
+
+  },
 
   gameOver: function () {
 
