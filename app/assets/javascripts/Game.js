@@ -36,11 +36,12 @@ Appleheels.Game.prototype = {
 
     this.cursor = this.input.keyboard.createCursorKeys();
 
-    this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
+    // this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
 
-    this.player = this.add.sprite(70, 100, 'player');
+    this.player = this.add.sprite(70, 100, this.game.sprite);
+    this.player.angle = this.game.angle;
 
-    this.player.body.gravity.y = 100;
+    this.player.body.gravity.y = this.game.y_gravity;
 
     // Create floor
     for (var i = 0; i < 26; i++) {
@@ -48,16 +49,14 @@ Appleheels.Game.prototype = {
       this.walls.add(wall);
       wall.body.immovable = true;
     }
-
 	},
 
 	update: function () {
-
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
-      this.player.body.velocity.x = -200;
+      this.player.body.velocity.x = this.game.x_velocity * -1;
     } else if (this.cursor.right.isDown) {
-      this.player.body.velocity.x = 200;
+      this.player.body.velocity.x = this.game.x_velocity;
     } else {
       this.player.body.velocity.x = 0;
     }
@@ -66,19 +65,19 @@ Appleheels.Game.prototype = {
     if (this.cursor.up.isDown) {
       console.log(this.player.body.touching);
       console.log(this.player.body.velocity);
-      this.player.body.velocity.y = -250;
+      this.player.body.velocity.y = this.game.y_velocity * -1;
       console.log(this.player.body.velocity);
     }
 
-    if (this.score_key.isDown){
-      $.ajax({
-        url: "/game/" + this.game.gameId,
-        type: "PUT",
-        data: "",
-        success: function(response) {
-        }
-      });
-    }
+    // if (this.score_key.isDown){
+    //   $.ajax({
+    //     url: "/game/" + this.game.gameId,
+    //     type: "PUT",
+    //     data: "",
+    //     success: function(response) {
+    //     }
+    //   });
+    // }
 
     // Player COLLIDE with walls
     this.physics.arcade.collide(this.player, this.walls);

@@ -5,6 +5,7 @@ class GameInstancesController < ApplicationController
   def create
     @game_instance = GameInstance.create(name: unique_game_name,
                                          status: "playing")
+    GameAttribute.create(game_instance: @game_instance)
     redirect_to @game_instance
   end
 
@@ -12,8 +13,10 @@ class GameInstancesController < ApplicationController
   end
 
   def update
-    @game_instance.increment!(:test_value, 1)
-    render js: "$('#game-score').html('#{@game_instance.test_value}')"
+    # @game_instance.increment!(:test_value, 1)
+    @game_instance.game_attribute.update_attributes(attributes_params)
+    redirect_to game_instance_path(@game_instance.slug)
+      # render js: "$('#game-score').html('#{@game_instance.test_value}')"
   end
 
   def random
@@ -27,5 +30,9 @@ class GameInstancesController < ApplicationController
   private
   def find_game_instance
     @game_instance = GameInstance.friendly.find(params[:id])
+  end
+
+  def attributes_params
+    params.require(:game_attribute).permit(:x_velocity, :y_velocity, :bounce, :y_gravity, :angle, :sprite)
   end
 end
