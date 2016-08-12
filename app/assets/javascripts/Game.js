@@ -69,7 +69,18 @@ Appleheels.Game.prototype = {
   useTerminal: function () {
     if (this.cursor.up.isDown) {
       console.log("TERMINAL");
+      console.log("favoriteNum", this.getFavoriteNum());
+
+      this.state.start('TerminalMenu');
     }
+  },
+
+  getFavoriteNum: function () {
+    return Appleheels.favoriteNum;
+  },
+
+  setFavoriteNum: function (num) {
+    Appleheels.favoriteNum = num;
   },
 
 	update: function () {
