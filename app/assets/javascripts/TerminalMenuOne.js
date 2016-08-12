@@ -22,14 +22,6 @@ Appleheels.TerminalMenuOne.prototype = {
     color: 0x15B93C
   },
 
-  getFavoriteNum: function () {
-    return Appleheels.favoriteNum;
-  },
-
-  setFavoriteNum: function (num) {
-    Appleheels.favoriteNum = num;
-  },
-
   getJumpPower: function () {
     return (this.game.jumpPower);
   },
@@ -44,26 +36,7 @@ Appleheels.TerminalMenuOne.prototype = {
     this.titleText.tint = this.terminalText.color;
 
     this.attributes = [];
-    this.attrFavNumber = [];
     this.attrJumpPower = [];
-
-    // INIT Favorite Number attribute
-    this.favNumText = this.add.bitmapText (0, 128, 'rollingThunder', 'Favorite Number', 16);
-    this.favNumText.x = this.margin.left;
-    this.favNumText.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.favNumText);
-    this.favNumDisplay = this.add.bitmapText (0, 128, 'rollingThunder', String(this.getFavoriteNum()), 16);
-    this.favNumDisplay.x = 512 - (this.favNumDisplay.textWidth + this.margin.right);
-    this.favNumDisplay.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.favNumDisplay);
-
-    this.decFavNum = this.add.bitmapText (0, 128, 'rollingThunder', '-', 16);
-    this.decFavNum.x = this.favNumDisplay.x - this.margin.left;
-    this.decFavNum.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.decFavNum);
-    this.incFavNum = this.add.bitmapText (492, 128, 'rollingThunder', '+', 16);
-    this.incFavNum.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.incFavNum);
 
     // INIT Jump Power attribute
     this.jumpPowerText = this.add.bitmapText (0, 164, 'rollingThunder', 'Jump Power', 16);
