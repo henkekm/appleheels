@@ -172,6 +172,10 @@ Appleheels.Game.prototype = {
     // PAN camera according to player's y position
     this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
 
+    if (this.game.objective == "die") {
+      this.gameWon = true;
+      this.gameOver();
+    }
   },
 
   render: function() {
@@ -185,6 +189,11 @@ Appleheels.Game.prototype = {
     if (this.gameWon)
     {
         var t = this.add.bitmapText (0, 128, 'rollingThunder', 'GAME WON', 32);
+        $.ajax({
+          url: "/game/" + this.game.gameId,
+          type: "PUT",
+          data: {game_instance: { status: "won" } },
+        });
     }
     else
     {
