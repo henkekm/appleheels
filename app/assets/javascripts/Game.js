@@ -12,7 +12,7 @@ Appleheels.Game = function (game) {
   this.terminalTwo;
   this.terminalThree;
   this.cursor;
-  this.jumpButton;
+  // this.jumpButton;
   // this.score;
   // this.scoreText;
 
@@ -61,6 +61,8 @@ Appleheels.Game.prototype = {
     this.game.camera.position.y = 0;
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
+
+    this.game.jumpPower = parseInt(this.game.jumpPower);
 
     // Place floor
     for (var i = 0; i < 26; i++) {
@@ -118,15 +120,15 @@ Appleheels.Game.prototype = {
   },
 
   getJumpPower: function () {
-    return (Appleheels.jumpPower * -1);
+    return (this.game.jumpPower * -1);
   },
 
   setJumpPower: function (num) {
-    Appleheels.JumpPower = num;
+    this.game.jumpPower = num;
   },
 
 	update: function () {
-
+    console.log("jump power", this.game.jumpPower)
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
       this.player.body.velocity.x = -200;
