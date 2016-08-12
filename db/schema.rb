@@ -29,18 +29,6 @@ ActiveRecord::Schema.define(version: 20160812165122) do
   add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
   add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
 
-  create_table "game_attributes", force: :cascade do |t|
-    t.integer  "x_velocity",                               default: 200
-    t.integer  "y_velocity",                               default: 250
-    t.decimal  "bounce",           precision: 2, scale: 1, default: 0.0
-    t.integer  "y_gravity",                                default: 100
-    t.integer  "angle",                                    default: 0
-    t.string   "sprite",                                   default: "player"
-    t.integer  "game_instance_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "game_instances", force: :cascade do |t|
     t.string   "slug"
     t.string   "name"

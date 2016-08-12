@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'RollingThunder';    
-  src: url('/assets/rolling_thunder_2.ttf') format('truetype');
+  src: font-url('/assets/rolling_thunder_2.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   text-transform: uppercase;
@@ -38,7 +38,7 @@ body {
 
   .title {
     font-size: 32px;
-    padding-top: 50px;
+    padding-top: 75px;
     padding-bottom: 80px;
     color: white;
   }
