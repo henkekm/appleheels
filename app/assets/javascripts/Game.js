@@ -83,6 +83,14 @@ Appleheels.Game.prototype = {
     Appleheels.favoriteNum = num;
   },
 
+  getJumpPower: function () {
+    return (Appleheels.jumpPower * -1);
+  },
+
+  setJumpPower: function (num) {
+    Appleheels.JumpPower = num;
+  },
+
 	update: function () {
 
     // MOVE left and right by pressing left and right keys
@@ -111,7 +119,7 @@ Appleheels.Game.prototype = {
 
     // JUMP by pressing the jumpButton key
     if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
-      this.player.body.velocity.y = -350;
+      this.player.body.velocity.y = this.getJumpPower();
     }
 
     // this.scoreText.text = 'score:' + this.score;
