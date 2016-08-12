@@ -20,7 +20,7 @@ Appleheels.MainMenu.prototype = {
 	    var t = this.add.bitmapText(0, 64, 'rollingThunder', 'Appleheels', 32);
 	    t.x = 256 - (t.textWidth / 2);
 
-        this.input.onDown.addOnce(this.startGame, this);
+      this.input.onDown.addOnce(this.startGame, this);
 
 	},
 

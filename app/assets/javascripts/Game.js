@@ -38,6 +38,7 @@ Appleheels.Game.prototype = {
 
     this.cursor = this.input.keyboard.createCursorKeys();
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.pauseButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
     // Place terminal
     this.terminal = this.add.sprite(340, 216, 'terminal');
@@ -69,7 +70,18 @@ Appleheels.Game.prototype = {
   useTerminal: function () {
     if (this.cursor.up.isDown) {
       console.log("TERMINAL");
+      console.log("favoriteNum", this.getFavoriteNum());
+
+      this.state.start('TerminalMenu');
     }
+  },
+
+  getFavoriteNum: function () {
+    return Appleheels.favoriteNum;
+  },
+
+  setFavoriteNum: function (num) {
+    Appleheels.favoriteNum = num;
   },
 
 	update: function () {
