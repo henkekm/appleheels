@@ -22,20 +22,23 @@ Appleheels.TerminalMenuThree.prototype = {
     color: 0xE81717
   },
 
-  getFavoriteNum: function () {
-    return Appleheels.favoriteNum;
+  getObjective: function (num) {
+    if (num == Appleheels.objectives.length) {
+      num = 0
+    } else if (num == -1) {
+      num = (Appleheels.objectives.length - 1)
+    };
+    this.game.objectiveCount = num;
+    console.log(num);
+    return Appleheels.objectives[num];
   },
 
-  setFavoriteNum: function (num) {
-    Appleheels.favoriteNum = num;
-  },
-
-  getJumpPower: function () {
-    return Appleheels.jumpPower;
-  },
-
-  setJumpPower: function (num) {
-    Appleheels.jumpPower = num;
+  initialObjective: function () {
+    if (this.game.objectives != "") {
+      return this.game.objectives
+    } else {
+      return this.getObjective(0)
+    };
   },
 
   init: function () {
@@ -44,48 +47,27 @@ Appleheels.TerminalMenuThree.prototype = {
     this.titleText.tint = this.terminalText.color;
 
     this.attributes = [];
-    this.attrFavNumber = [];
-    this.attrJumpPower = [];
+    this.attrObjectiveAssignment = [];
 
-    // INIT Favorite Number attribute
-    this.favNumText = this.add.bitmapText (0, 128, 'rollingThunder', 'Favorite Number', 16);
-    this.favNumText.x = this.margin.left;
-    this.favNumText.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.favNumText);
-    this.favNumDisplay = this.add.bitmapText (0, 128, 'rollingThunder', String(this.getFavoriteNum()), 16);
-    this.favNumDisplay.x = 512 - (this.favNumDisplay.textWidth + this.margin.right);
-    this.favNumDisplay.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.favNumDisplay);
+    // INIT Objective attribute
+    this.objectiveAssignmentText = this.add.bitmapText (0, 164, 'rollingThunder', 'Down Assignment', 16);
+    this.objectiveAssignmentText.x = this.margin.left;
+    this.objectiveAssignmentText.tint = this.terminalText.color;
+    this.attrObjectiveAssignment.push(this.objectiveAssignmentText);
+    this.objectiveAssignmentDisplay = this.add.bitmapText (0, 164, 'rollingThunder', this.initialObjective(), 16);
+    this.objectiveAssignmentDisplay.x = 500 - (this.objectiveAssignmentDisplay.textWidth + this.margin.right);
+    this.objectiveAssignmentDisplay.tint = this.terminalText.color;
+    this.attrObjectiveAssignment.push(this.objectiveAssignmentDisplay);
 
-    this.decFavNum = this.add.bitmapText (0, 128, 'rollingThunder', '-', 16);
-    this.decFavNum.x = this.favNumDisplay.x - this.margin.left;
-    this.decFavNum.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.decFavNum);
-    this.incFavNum = this.add.bitmapText (492, 128, 'rollingThunder', '+', 16);
-    this.incFavNum.tint = this.terminalText.color;
-    this.attrFavNumber.push(this.incFavNum);
+    this.decObjectiveAssignment = this.add.bitmapText (0, 164, 'rollingThunder', '-', 16);
+    this.decObjectiveAssignment.x = this.objectiveAssignmentDisplay.x - this.margin.left;
+    this.decObjectiveAssignment.tint = this.terminalText.color;
+    this.attrObjectiveAssignment.push(this.decObjectiveAssignment);
+    this.incObjectiveAssignment = this.add.bitmapText (492, 164, 'rollingThunder', '+', 16);
+    this.incObjectiveAssignment.tint = this.terminalText.color;
+    this.attrObjectiveAssignment.push(this.incObjectiveAssignment);
 
-    // INIT Jump Power attribute
-    this.jumpPowerText = this.add.bitmapText (0, 164, 'rollingThunder', 'Jump Power', 16);
-    this.jumpPowerText.x = this.margin.left;
-    this.jumpPowerText.tint = this.terminalText.color;
-    this.attrJumpPower.push(this.jumpPowerText);
-    this.jumpPowerDisplay = this.add.bitmapText (0, 164, 'rollingThunder', String(this.getJumpPower()), 16);
-    this.jumpPowerDisplay.x = 512 - (this.jumpPowerDisplay.textWidth + this.margin.right);
-    this.jumpPowerDisplay.tint = this.terminalText.color;
-    this.attrJumpPower.push(this.jumpPowerDisplay);
-
-    this.decJumpPower = this.add.bitmapText (0, 164, 'rollingThunder', '-', 16);
-    this.decJumpPower.x = this.jumpPowerDisplay.x - this.margin.left;
-    this.decJumpPower.tint = this.terminalText.color;
-    this.attrJumpPower.push(this.decJumpPower);
-    this.incJumpPower = this.add.bitmapText (492, 164, 'rollingThunder', '+', 16);
-    this.incJumpPower.tint = this.terminalText.color;
-    this.attrJumpPower.push(this.incJumpPower);
-
-
-    this.attributes.push(this.attrFavNumber);
-    this.attributes.push(this.attrJumpPower);
+    this.attributes.push(this.attrObjectiveAssignment);
     // console.log(this.attributes[0]);
   },
 
@@ -101,26 +83,28 @@ Appleheels.TerminalMenuThree.prototype = {
   update: function () {
     // Press RIGHT to increment value
     if (this.cursor.right.isDown) {
-      this.setJumpPower (this.getJumpPower() + 1);
-
-      this.jumpPowerDisplay.text = String(this.getJumpPower());
-
-      this.jumpPowerDisplay.x = 512 - (this.jumpPowerDisplay.textWidth + this.margin.right);
-      this.decJumpPower.x = this.jumpPowerDisplay.x - this.margin.left;
+      this.getObjective(this.game.objectiveCount + 1);
+      this.objectiveAssignmentDisplay.text = this.getObjective(this.game.objectiveCount);
+      this.objectiveAssignmentDisplay.x = 500 - (this.objectiveAssignmentDisplay.textWidth + this.margin.right);
+      this.decObjectiveAssignment.x = this.objectiveAssignmentDisplay.x - this.margin.left;
     };
     // Press LEFT to decrement value
     if (this.cursor.left.isDown) {
-      this.setJumpPower (this.getJumpPower() - 1);
-      this.jumpPowerDisplay.text = String(this.getJumpPower());
+      this.getObjective(this.game.objectiveCount - 1);
 
-      this.jumpPowerDisplay.x = 512 - (this.jumpPowerDisplay.textWidth + this.margin.right);
-      this.decJumpPower.x = this.jumpPowerText.x - this.margin.left;
+      this.objectiveAssignmentDisplay.x = 500 - (this.objectiveAssignmentDisplay.textWidth + this.margin.right);
+      this.decObjectiveAssignment.x = this.objectiveAssignmentText.x - this.margin.left;
     };
     // Press ESC to exit
     if (this.backButton.isDown) {
       console.log("EXIT");
-      console.log("JumpPower", this.getJumpPower());
-
+      this.game.objective = this.getObjective(this.game.objectiveCount);
+      console.log("ObjectiveAssignment", this.getObjective(this.game.objective));
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: {game_instance: { objectives: this.game.objective } },
+      });
       this.state.start('Game');
     };
 
