@@ -24,7 +24,7 @@ Appleheels.Game = function (game) {
 
 Appleheels.Game.prototype = {
 
-	create: function () {
+  create: function () {
 
     this.walls = this.add.group();
     this.coins = this.add.group();
@@ -57,7 +57,7 @@ Appleheels.Game.prototype = {
     this.player = this.add.sprite(70, 344, 'player');
 
     this.physics.arcade.enable (this.player);
-    this.game.world.setBounds (0, -384, 512, 768);
+    this.game.world.setBounds (0, -384, 512, 1152);
     this.game.camera.position.y = 0;
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
@@ -66,9 +66,11 @@ Appleheels.Game.prototype = {
 
     // Place floor
     for (var i = 0; i < 26; i++) {
-      var wall = this.add.sprite(20*i, 364, 'wall');
-      this.walls.add(wall);
-      wall.body.immovable = true;
+      for (var j = 0; j < 20; j++) {
+        var wall = this.add.sprite(20*i, 364 + j*20, 'wall');
+        this.walls.add(wall);
+        wall.body.immovable = true;        
+      }
     }
 
     // Place platform
@@ -85,7 +87,7 @@ Appleheels.Game.prototype = {
     }
 
 
-	},
+  },
 
   useTerminalOne: function () {
     if (this.cursor.up.isDown) {
@@ -127,8 +129,19 @@ Appleheels.Game.prototype = {
     this.game.jumpPower = num;
   },
 
-	update: function () {
-    console.log("jump power", this.game.jumpPower)
+  update: function () {
+    // Player COLLIDE with walls
+    this.game.physics.arcade.collide(this.player, this.walls);
+
+    // Player OVERLAP with terminalOne
+    this.game.physics.arcade.overlap(this.player, this.terminalOne, this.useTerminalOne, null, this);
+
+    // Player OVERLAP with terminalTwo
+    this.game.physics.arcade.overlap(this.player, this.terminalTwo, this.useTerminalTwo, null, this);
+
+    // Player OVERLAP with terminalThree
+    this.game.physics.arcade.overlap(this.player, this.terminalThree, this.useTerminalThree, null, this);
+
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
       this.player.body.velocity.x = -200;
@@ -147,17 +160,19 @@ Appleheels.Game.prototype = {
         }
       });
     }
-    // Player COLLIDE with walls
-    this.game.physics.arcade.collide(this.player, this.walls);
+    var processHandler = function () {
+      return true;
+    }
+    var destroyWall = function (_player, _wall) {
+      _wall.kill();
+      _wall.destroy();
+    }
 
-    // Player OVERLAP with terminalOne
-    this.game.physics.arcade.overlap(this.player, this.terminalOne, this.useTerminalOne, null, this);
-
-    // Player OVERLAP with terminalTwo
-    this.game.physics.arcade.overlap(this.player, this.terminalTwo, this.useTerminalTwo, null, this);
-
-    // Player OVERLAP with terminalThree
-    this.game.physics.arcade.overlap(this.player, this.terminalThree, this.useTerminalThree, null, this);
+    // DIG by pressing the down key
+    if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+      this.game.physics.arcade.collide(this.player, this.walls, destroyWall(this.player, this.walls.children[0]), processHandler);
+      console.log(this.walls.children[0]);
+    }
 
     // JUMP by pressing the jumpButton key
     if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
@@ -165,47 +180,13 @@ Appleheels.Game.prototype = {
     }
 
     // PAN camera according to player's y position
-
     this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
-    // this.game.camera.atLimit = true;
-    // if (this.game.camera.position.y > 0) {
-    //   this.game.camera.position.y = 0;
-    // }
 
-
-    // this.scoreText.text = 'score:' + this.score;
-
-    // if (this.gameLost || this.gameWon)
-    // {
-    //   return;
-    // }
-
-    // for (var i = 0; i < this.cities.length; i++)
-    // {
-    //   if (this.cities[i].alive)
-    //   {
-    //     this.physics.arcade.overlap(this.plane, this.cities[i].top, this.planeSmash, null, this);
-    //   }
-    // }
-
-    // if (this.bomb.visible)
-    // {
-    //   for (var i = 0; i < this.cities.length; i++)
-    //   {
-    //     if (this.cities[i].alive)
-    //     {
-    //       this.physics.arcade.overlap(this.bomb, this.cities[i].top, this.cities[i].hit, null, this.cities[i]);
-    //     }
-    //   }
-
-    //   this.physics.arcade.overlap(this.bomb, this.land, this.removeBomb, null, this);
-    // }
-
-	},
+  },
 
   render: function() {
 
-    this.game.debug.cameraInfo(this.game.camera, 32, 32);
+    // this.game.debug.cameraInfo(this.game.camera, 32, 32);
 
   },
 
@@ -226,10 +207,10 @@ Appleheels.Game.prototype = {
 
   },
 
-	quitGame: function () {
+  quitGame: function () {
 
-		this.state.start ('MainMenu');
+    this.state.start ('MainMenu');
 
-	}
+  }
 
 };
