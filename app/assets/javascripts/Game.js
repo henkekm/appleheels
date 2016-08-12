@@ -69,7 +69,7 @@ Appleheels.Game.prototype = {
       for (var j = 0; j < 20; j++) {
         var wall = this.add.sprite(20*i, 364 + j*20, 'wall');
         this.walls.add(wall);
-        wall.body.immovable = true;        
+        wall.body.immovable = true;
       }
     }
 
@@ -85,9 +85,7 @@ Appleheels.Game.prototype = {
       this.walls.add(wall);
       wall.body.immovable = true;
     }
-
-
-  },
+	},
 
   useTerminalOne: function () {
     if (this.cursor.up.isDown) {
@@ -111,14 +109,6 @@ Appleheels.Game.prototype = {
 
       this.state.start('TerminalMenuThree');
     }
-  },
-
-  getFavoriteNum: function () {
-    return Appleheels.favoriteNum;
-  },
-
-  setFavoriteNum: function (num) {
-    Appleheels.favoriteNum = num;
   },
 
   getJumpPower: function () {

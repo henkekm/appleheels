@@ -22,12 +22,24 @@ Appleheels.TerminalMenuTwo.prototype = {
     color: 0xE6E817
   },
 
-  getDownAssignment: function () {
-    return Appleheels.downAssignment;
+  getDownAssignment: function (num) {
+    console.log("down", Appleheels.downAssigment[num]);
+    if (num == Appleheels.downAssigment.length) {
+      num = 0
+    } else if (num == -1) {
+      num = Appleheels.downAssigment.length
+    };
+    this.game.downCount = num;
+    return Appleheels.downAssigment[num];
+    console.log("down count", this.game.downCount);
   },
 
-  setDownAssignment: function (num) {
-    Appleheels.downAssignment = num;
+  initialDown: function () {
+    if (this.game.downMethod != "") {
+      return this.game.downMethod
+    } else {
+      return this.getDownAssignment(0)
+    };
   },
 
   init: function () {
@@ -43,7 +55,7 @@ Appleheels.TerminalMenuTwo.prototype = {
     this.downAssignmentText.x = this.margin.left;
     this.downAssignmentText.tint = this.terminalText.color;
     this.attrDownAssignment.push(this.downAssignmentText);
-    this.downAssignmentDisplay = this.add.bitmapText (0, 164, 'rollingThunder', String(this.getDownAssignment()), 16);
+    this.downAssignmentDisplay = this.add.bitmapText (0, 164, 'rollingThunder', this.initialDown(), 16);
     this.downAssignmentDisplay.x = 512 - (this.downAssignmentDisplay.textWidth + this.margin.right);
     this.downAssignmentDisplay.tint = this.terminalText.color;
     this.attrDownAssignment.push(this.downAssignmentDisplay);
@@ -72,17 +84,18 @@ Appleheels.TerminalMenuTwo.prototype = {
   update: function () {
     // Press RIGHT to increment value
     if (this.cursor.right.isDown) {
-      this.setDownAssignment (this.getDownAssignment() + 1);
+      this.getDownAssignment(this.game.downCount + 1);
 
-      this.downAssignmentDisplay.text = String(this.getDownAssignment());
+      this.downAssignmentDisplay.text = this.getDownAssignment(this.game.downCount);
 
       this.downAssignmentDisplay.x = 512 - (this.downAssignmentDisplay.textWidth + this.margin.right);
       this.decDownAssignment.x = this.downAssignmentDisplay.x - this.margin.left;
     };
     // Press LEFT to decrement value
     if (this.cursor.left.isDown) {
-      this.setDownAssignment (this.getDownAssignment() - 1);
-      this.downAssignmentDisplay.text = String(this.getDownAssignment());
+      // this.setDownAssignment (this.getDownAssignment() - 1);
+      // this.downAssignmentDisplay.text = String(this.getDownAssignment());
+      this.getDownAssignment(this.game.downCount - 1);
 
       this.downAssignmentDisplay.x = 512 - (this.downAssignmentDisplay.textWidth + this.margin.right);
       this.decDownAssignment.x = this.downAssignmentText.x - this.margin.left;
@@ -90,8 +103,14 @@ Appleheels.TerminalMenuTwo.prototype = {
     // Press ESC to exit
     if (this.backButton.isDown) {
       console.log("EXIT");
-      console.log("DownAssignment", this.getDownAssignment());
-
+      console.log("DownAssignment", this.getDownAssignment(this.game.downCount));
+      this.game.downMethod = this.getDownAssignment(this.game.downCount);
+      console.log("DownAssignment", this.getDownAssignment(this.game.downMethod));
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: {game_instance: { jump_power: this.game.downMethod } },
+      });
       this.state.start('Game');
     };
 
