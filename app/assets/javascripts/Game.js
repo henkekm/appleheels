@@ -8,7 +8,11 @@ Appleheels.Game = function (game) {
   this.coins;
   this.enemy;
   this.enemies;
+  this.terminalOne;
+  this.terminalTwo;
+  this.terminalThree;
   this.cursor;
+  // this.jumpButton;
   // this.score;
   // this.scoreText;
 
@@ -20,7 +24,7 @@ Appleheels.Game = function (game) {
 
 Appleheels.Game.prototype = {
 
-	create: function () {
+  create: function () {
 
     this.walls = this.add.group();
     this.coins = this.add.group();
@@ -35,21 +39,98 @@ Appleheels.Game.prototype = {
     this.world.enableBody = true;
 
     this.cursor = this.input.keyboard.createCursorKeys();
+    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    this.player = this.add.sprite(70, 100, 'player');
+    // Place terminal 1
+    this.terminalOne = this.add.sprite(340, 216, 'terminalOne');
 
-    this.player.body.gravity.y = 100;
+    // Place terminal 2
+    this.terminalTwo = this.add.sprite(40, -324, 'terminalTwo');
 
-    // Create floor
+    // Place terminal 3 TEMPORARILY INACCESSIBLE
+    this.terminalThree = this.add.sprite(600, 600, 'terminalThree');
+
+    // Adds temp score key
+    this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
+
+    // Place player
+    this.player = this.add.sprite(70, 344, 'player');
+
+    this.physics.arcade.enable (this.player);
+    this.game.world.setBounds (0, -384, 512, 1152);
+    this.game.camera.position.y = 0;
+    this.player.body.collideWorldBounds = true;
+    this.player.body.gravity.y = 500;
+
+    this.game.jumpPower = parseInt(this.game.jumpPower);
+
+    // Place floor
     for (var i = 0; i < 26; i++) {
-      var wall = this.add.sprite(20*i, 364, 'wall')
+      for (var j = 0; j < 20; j++) {
+        var wall = this.add.sprite(20*i, 364 + j*20, 'wall');
+        this.walls.add(wall);
+        wall.body.immovable = true;
+      }
+    }
+
+    // Place platform
+    for (var i = 0; i < 15; i++) {
+      var wall = this.add.sprite(100+20*i, 256, 'wall');
       this.walls.add(wall);
       wall.body.immovable = true;
     }
-
+    // Place sky platform
+    for (var i = 0; i < 5; i++) {
+      var wall = this.add.sprite(20+20*i, -284, 'wall');
+      this.walls.add(wall);
+      wall.body.immovable = true;
+    }
 	},
 
-	update: function () {
+  useTerminalOne: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL 1");
+
+      this.state.start('TerminalMenuOne');
+    }
+  },
+
+  useTerminalTwo: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL 2");
+
+      this.state.start('TerminalMenuTwo');
+    }
+  },
+
+  useTerminalThree: function () {
+    if (this.cursor.up.isDown) {
+      console.log("TERMINAL 3");
+
+      this.state.start('TerminalMenuThree');
+    }
+  },
+
+  getJumpPower: function () {
+    return (this.game.jumpPower * -1);
+  },
+
+  setJumpPower: function (num) {
+    this.game.jumpPower = num;
+  },
+
+  update: function () {
+    // Player COLLIDE with walls
+    this.game.physics.arcade.collide(this.player, this.walls);
+
+    // Player OVERLAP with terminalOne
+    this.game.physics.arcade.overlap(this.player, this.terminalOne, this.useTerminalOne, null, this);
+
+    // Player OVERLAP with terminalTwo
+    this.game.physics.arcade.overlap(this.player, this.terminalTwo, this.useTerminalTwo, null, this);
+
+    // Player OVERLAP with terminalThree
+    this.game.physics.arcade.overlap(this.player, this.terminalThree, this.useTerminalThree, null, this);
 
     // MOVE left and right by pressing left and right keys
     if (this.cursor.left.isDown) {
@@ -60,46 +141,44 @@ Appleheels.Game.prototype = {
       this.player.body.velocity.x = 0;
     }
 
-    // JUMP by pressing the up key
-    if (this.cursor.up.isDown) {
-      console.log(this.player.body.touching);
-      console.log(this.player.body.velocity);
-      this.player.body.velocity.y = -250;
-      console.log(this.player.body.velocity);
+    if (this.score_key.isDown){
+      $.ajax({
+        url: "/game/" + this.game.gameId,
+        type: "PUT",
+        data: "",
+        success: function(response) {
+        }
+      });
+    }
+    var processHandler = function () {
+      return true;
+    }
+    var destroyWall = function (_player, _wall) {
+      _wall.kill();
+      _wall.destroy();
     }
 
-    // Player COLLIDE with walls
-    this.physics.arcade.collide(this.player, this.walls);
+    // DIG by pressing the down key
+    if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+      this.game.physics.arcade.collide(this.player, this.walls, destroyWall(this.player, this.walls.children[0]), processHandler);
+      console.log(this.walls.children[0]);
+    }
 
-    // this.scoreText.text = 'score:' + this.score;
+    // JUMP by pressing the jumpButton key
+    if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+      this.player.body.velocity.y = this.getJumpPower();
+    }
 
-    // if (this.gameLost || this.gameWon)
-    // {
-    //   return;
-    // }
+    // PAN camera according to player's y position
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
 
-    // for (var i = 0; i < this.cities.length; i++)
-    // {
-    //   if (this.cities[i].alive)
-    //   {
-    //     this.physics.arcade.overlap(this.plane, this.cities[i].top, this.planeSmash, null, this);
-    //   }
-    // }
+  },
 
-    // if (this.bomb.visible)
-    // {
-    //   for (var i = 0; i < this.cities.length; i++)
-    //   {
-    //     if (this.cities[i].alive)
-    //     {
-    //       this.physics.arcade.overlap(this.bomb, this.cities[i].top, this.cities[i].hit, null, this.cities[i]);
-    //     }
-    //   }
+  render: function() {
 
-    //   this.physics.arcade.overlap(this.bomb, this.land, this.removeBomb, null, this);
-    // }
+    // this.game.debug.cameraInfo(this.game.camera, 32, 32);
 
-	},
+  },
 
   gameOver: function () {
 
@@ -118,10 +197,10 @@ Appleheels.Game.prototype = {
 
   },
 
-	quitGame: function () {
+  quitGame: function () {
 
-		this.state.start ('MainMenu');
+    this.state.start ('MainMenu');
 
-	}
+  }
 
 };

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160811184718) do
+ActiveRecord::Schema.define(version: 20160812165122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,13 +29,28 @@ ActiveRecord::Schema.define(version: 20160811184718) do
   add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
   add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
 
+  create_table "game_attributes", force: :cascade do |t|
+    t.integer  "x_velocity",                               default: 200
+    t.integer  "y_velocity",                               default: 250
+    t.decimal  "bounce",           precision: 2, scale: 1, default: 0.0
+    t.integer  "y_gravity",                                default: 100
+    t.integer  "angle",                                    default: 0
+    t.string   "sprite",                                   default: "player"
+    t.integer  "game_instance_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "game_instances", force: :cascade do |t|
     t.string   "slug"
     t.string   "name"
-    t.integer  "test_value", default: 0
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "test_value",  default: 0
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.string   "status"
+    t.string   "objectives"
+    t.integer  "jump_power",  default: 350
+    t.string   "down_method", default: ""
   end
 
   add_index "game_instances", ["slug"], name: "index_game_instances_on_slug", unique: true, using: :btree
