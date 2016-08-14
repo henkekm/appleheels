@@ -13,8 +13,9 @@ class GameInstancesController < ApplicationController
 
   def update
     @game_instance.update_attributes(game_params)
-    # @game_instance.increment!(:test_value, 1)
-    render js: "$('#game-score').html('#{@game_instance.test_value}')"
+    if @game_instance.status == "won"
+      redirect_to game_instance_path(@game_instance.slug)
+    end
   end
 
   def random
