@@ -100,11 +100,13 @@ Appleheels.TerminalMenuTwo.prototype = {
       console.log("EXIT");
       this.game.downMethod = this.getDownAssignment(this.game.downCount);
       console.log("DownAssignment", this.getDownAssignment(this.game.downMethod));
+
       $.ajax({
         url: "/game/" + this.game.gameId,
         type: "PUT",
         data: {game_instance: { down_method: this.game.downMethod } },
       });
+      
       this.state.start('Game');
     };
 
