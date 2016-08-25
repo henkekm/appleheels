@@ -22,31 +22,20 @@ Appleheels.TerminalMenuTwo.prototype = {
     color: 0xE6E817
   },
 
-  // setDownAssignment: function (_currentVal) {
-  //   this.game.isDig = !this.game.isDig;
-  // },
+  setDownAssignment: function () {
+    oldVar = Appleheels.downAssignment.shift();
+    Appleheels.downAssignment.push(oldVar);
+  },
 
   getDownAssignment: function (_currentVal) {
-    if (_currentVal == true) {
-      return Appleheels.downAssigment[1];
-    } else {
-      return Appleheels.downAssigment[0];
-    }
-    // if (num == Appleheels.downAssigment.length) {
-    //   num = 0
-    // } else if (num == -1) {
-    //   num = (Appleheels.downAssigment.length - 1)
-    // };
-    // this.game.downCount = num;
-    // console.log(num);
-    // return Appleheels.downAssigment[num];
+    return Appleheels.downAssignment[0];
   },
 
   initialDown: function () {
     if (this.game.downMethod != "") {
       return this.game.downMethod
     } else {
-      return this.getDownAssignment(0)
+      return this.getDownAssignment();
     };
   },
 
@@ -92,15 +81,15 @@ Appleheels.TerminalMenuTwo.prototype = {
   update: function () {
     // Press RIGHT or LEFT to toggle digging
     if (this.cursor.right.isDown || this.cursor.left.isDown) {
-      this.game.isDig = !this.game.isDig;
-      this.downAssignmentDisplay.text = this.getDownAssignment(this.game.isDig);
+      this.setDownAssignment();
+      this.downAssignmentDisplay.text = this.getDownAssignment();
       this.downAssignmentDisplay.x = 500 - (this.downAssignmentDisplay.textWidth + this.margin.right);
       this.decDownAssignment.x = this.downAssignmentDisplay.x - this.margin.left;
     };
     // Press ESC to exit
     if (this.backButton.isDown) {
       console.log("EXIT");
-      this.game.downMethod = this.getDownAssignment(this.game.isDig);
+      this.game.downMethod = this.getDownAssignment();
 
       $.ajax({
         url: "/game/" + this.game.gameId,
