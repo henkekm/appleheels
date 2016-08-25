@@ -22,15 +22,24 @@ Appleheels.TerminalMenuTwo.prototype = {
     color: 0xE6E817
   },
 
-  getDownAssignment: function (num) {
-    if (num == Appleheels.downAssigment.length) {
-      num = 0
-    } else if (num == -1) {
-      num = (Appleheels.downAssigment.length - 1)
-    };
-    this.game.downCount = num;
-    console.log(num);
-    return Appleheels.downAssigment[num];
+  // setDownAssignment: function (_currentVal) {
+  //   this.game.isDig = !this.game.isDig;
+  // },
+
+  getDownAssignment: function (_currentVal) {
+    if (_currentVal == true) {
+      return Appleheels.downAssigment[1];
+    } else {
+      return Appleheels.downAssigment[0];
+    }
+    // if (num == Appleheels.downAssigment.length) {
+    //   num = 0
+    // } else if (num == -1) {
+    //   num = (Appleheels.downAssigment.length - 1)
+    // };
+    // this.game.downCount = num;
+    // console.log(num);
+    // return Appleheels.downAssigment[num];
   },
 
   initialDown: function () {
@@ -81,32 +90,24 @@ Appleheels.TerminalMenuTwo.prototype = {
   },
 
   update: function () {
-    // Press RIGHT to increment value
-    if (this.cursor.right.isDown) {
-      this.getDownAssignment(this.game.downCount + 1);
-      this.downAssignmentDisplay.text = this.getDownAssignment(this.game.downCount);
+    // Press RIGHT or LEFT to toggle digging
+    if (this.cursor.right.isDown || this.cursor.left.isDown) {
+      this.game.isDig = !this.game.isDig;
+      this.downAssignmentDisplay.text = this.getDownAssignment(this.game.isDig);
       this.downAssignmentDisplay.x = 500 - (this.downAssignmentDisplay.textWidth + this.margin.right);
       this.decDownAssignment.x = this.downAssignmentDisplay.x - this.margin.left;
-    };
-    // Press LEFT to decrement value
-    if (this.cursor.left.isDown) {
-      this.getDownAssignment(this.game.downCount - 1);
-
-      this.downAssignmentDisplay.x = 500 - (this.downAssignmentDisplay.textWidth + this.margin.right);
-      this.decDownAssignment.x = this.downAssignmentText.x - this.margin.left;
     };
     // Press ESC to exit
     if (this.backButton.isDown) {
       console.log("EXIT");
-      this.game.downMethod = this.getDownAssignment(this.game.downCount);
-      console.log("DownAssignment", this.getDownAssignment(this.game.downMethod));
+      this.game.downMethod = this.getDownAssignment(this.game.isDig);
 
       $.ajax({
         url: "/game/" + this.game.gameId,
         type: "PUT",
         data: {game_instance: { down_method: this.game.downMethod } },
       });
-      
+
       this.state.start('Game');
     };
 
