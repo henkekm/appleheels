@@ -2,8 +2,9 @@
 Appleheels.Game = function (game) {
 
   this.player;
-  this.wall;
-  this.walls;
+  this.floor;
+  this.floors;
+  this.platforms;
   this.coin;
   this.coins;
   this.enemy;
@@ -24,11 +25,16 @@ Appleheels.Game = function (game) {
 
 Appleheels.Game.prototype = {
 
+  init: function () {
+    // Test var floors = this.floors to see if we can unthis this app
+  },
+
   create: function () {
 
-    this.walls = this.add.group();
-    this.coins = this.add.group();
-    this.enemies = this.add.group();
+    this.floors = this.add.group();
+    this.platforms = this.add.group();
+    // this.coins = this.add.group();
+    // this.enemies = this.add.group();
 
     this.gameLost = false;
     this.gameWon = false;
@@ -62,28 +68,29 @@ Appleheels.Game.prototype = {
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
 
+    // What happens if we remove this line \/?
     this.game.jumpPower = parseInt(this.game.jumpPower);
 
     // Place floor
     for (var i = 0; i < 26; i++) {
       for (var j = 0; j < 20; j++) {
-        var wall = this.add.sprite(20*i, 364 + j*20, 'wall');
-        this.walls.add(wall);
-        wall.body.immovable = true;
+        var floor = this.add.sprite(20*i, 364 + j*20, 'wall');
+        this.floors.add(floor);
+        floor.body.immovable = true;
       }
     }
 
     // Place platform
     for (var i = 0; i < 15; i++) {
-      var wall = this.add.sprite(100+20*i, 256, 'wall');
-      this.walls.add(wall);
-      wall.body.immovable = true;
+      var platform = this.add.sprite(100+20*i, 256, 'wall');
+      this.platforms.add(platform);
+      platform.body.immovable = true;
     }
     // Place sky platform
     for (var i = 0; i < 5; i++) {
-      var wall = this.add.sprite(20+20*i, -284, 'wall');
-      this.walls.add(wall);
-      wall.body.immovable = true;
+      var platform = this.add.sprite(20+20*i, -284, 'wall');
+      this.platforms.add(platform);
+      platform.body.immovable = true;
     }
 	},
 
@@ -120,8 +127,38 @@ Appleheels.Game.prototype = {
   },
 
   update: function () {
-    // Player COLLIDE with walls
-    this.game.physics.arcade.collide(this.player, this.walls);
+
+    var isDigging = function () {
+      if (this.cursor.down.isDown) {
+        return true;
+      }
+    }
+
+    // is it best practice to use processHandler instead of the if statement found below?
+    // var processHandler = function () {
+    //   console.log("processHandler is being invoked");
+    //   var canProcess = false;
+    //   if (this.game.downMethod == "dig" && this.player.body.touching.down || this.player.body.onFloor()) {
+    //     canProcess = true;
+    //   }
+    //   return canProcess;
+    // }
+
+    var destroyFloor = function (_player, _floor) {
+      console.log("destroyFloor is being invoked", _floor);
+        _floor.kill();
+        _floor.destroy();
+    }
+
+    // Player COLLIDE with platforms and floors
+    this.game.physics.arcade.collide(this.player, this.platforms);
+    if (this.cursor.down.isDown && this.game.downMethod == "dig") {
+      // Should we add the 'isTouching'-type logic to prevent
+      // Calling .collide unecessarily?
+      this.game.physics.arcade.collide(this.player, this.floors, destroyFloor);
+    } else {
+      this.game.physics.arcade.collide(this.player, this.floors);
+    }
 
     // Player OVERLAP with terminalOne
     this.game.physics.arcade.overlap(this.player, this.terminalOne, this.useTerminalOne, null, this);
@@ -150,22 +187,15 @@ Appleheels.Game.prototype = {
         }
       });
     }
-    var processHandler = function () {
-      return true;
-    }
-    var destroyWall = function (_player, _wall) {
-      _wall.kill();
-      _wall.destroy();
-    }
 
     // DIG by pressing the down key
-    if (this.game.downMethod == "dig") {
-      if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
-        console.log("hello", this.game.physics.arcade.overlap(this.player, this.wall))
-        this.game.physics.arcade.collide(this.player, this.walls, destroyWall, processHandler);
-        console.log(this.walls.children[0]);
-      }
-    }
+    // if (this.game.downMethod == "dig") {
+    //   if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
+    //     console.log("hello", this.game.physics.arcade.overlap(this.player, this.floor))
+    //     this.game.physics.arcade.collide(this.player, this.floors, destroyFloor, processHandler);
+    //     console.log(this.floors.children[0]);
+    //   }
+    // }
 
     // JUMP by pressing the jumpButton key
     if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
@@ -175,6 +205,7 @@ Appleheels.Game.prototype = {
     // PAN camera according to player's y position
     this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
 
+    // WIN CONDITION
     if (this.game.objective == "die") {
       this.gameWon = true;
       this.gameOver();
@@ -184,6 +215,8 @@ Appleheels.Game.prototype = {
   render: function() {
 
     // this.game.debug.cameraInfo(this.game.camera, 32, 32);
+    // this.game.debug.bodyInfo(this.player, 32, 32);
+    // this.game.debug.body(this.player);
 
   },
 
