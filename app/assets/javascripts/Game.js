@@ -29,6 +29,10 @@ Appleheels.Game.prototype = {
     // Test var floors = this.floors to see if we can unthis this app
   },
 
+  isBetween: function (num, min, max) {
+    return num >= min && num <= max;
+  },
+
   create: function () {
 
     this.floors = this.add.group();
@@ -53,8 +57,8 @@ Appleheels.Game.prototype = {
     // Place terminal 2
     this.terminalTwo = this.add.sprite(40, -324, 'terminalTwo');
 
-    // Place terminal 3 TEMPORARILY INACCESSIBLE
-    this.terminalThree = this.add.sprite(600, 600, 'terminalThree');
+    // Place terminal 3
+    this.terminalThree = this.add.sprite(300, 584, 'terminalThree');
 
     // Adds temp score key
     this.score_key = this.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -68,27 +72,32 @@ Appleheels.Game.prototype = {
     this.player.body.collideWorldBounds = true;
     this.player.body.gravity.y = 500;
 
-    // What happens if we remove this line \/?
+    // Converts initial value from string to int
+    // Preventing 350 + 1 == 3501
     this.game.jumpPower = parseInt(this.game.jumpPower);
 
     // Place floor
-    for (var i = 0; i < 26; i++) {
-      for (var j = 0; j < 20; j++) {
-        var floor = this.add.sprite(20*i, 364 + j*20, 'wall');
-        this.floors.add(floor);
-        floor.body.immovable = true;
+    for (var _col = 0; _col < 26; _col++) {
+      for (var _row = 0; _row < 20; _row++) {
+        if (this.isBetween(_row, 10, 12) && this.isBetween(_col, 6, 16)) {
+          // Do nothing, and carve out a cave for terminalThree
+        } else {
+          var floor = this.add.sprite(20*_col, 364+_row*20, 'wall');
+          this.floors.add(floor);
+          floor.body.immovable = true;
+        }
       }
     }
 
     // Place platform
-    for (var i = 0; i < 15; i++) {
-      var platform = this.add.sprite(100+20*i, 256, 'wall');
+    for (var _col = 0; _col < 15; _col++) {
+      var platform = this.add.sprite(100+20*_col, 256, 'wall');
       this.platforms.add(platform);
       platform.body.immovable = true;
     }
     // Place sky platform
-    for (var i = 0; i < 5; i++) {
-      var platform = this.add.sprite(20+20*i, -284, 'wall');
+    for (var _col = 0; _col < 5; _col++) {
+      var platform = this.add.sprite(20+20*_col, -284, 'wall');
       this.platforms.add(platform);
       platform.body.immovable = true;
     }
