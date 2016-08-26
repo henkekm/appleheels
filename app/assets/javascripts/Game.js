@@ -161,7 +161,7 @@ Appleheels.Game.prototype = {
 
     // Player COLLIDE with platforms and floors
     this.game.physics.arcade.collide(this.player, this.platforms);
-    if (this.cursor.down.isDown && this.game.downMethod == "dig") {
+    if (this.cursor.down.isDown && this.game.downVerb == "dig") {
       // Should we add the 'isTouching'-type logic to prevent
       // Calling .collide unecessarily?
       this.game.physics.arcade.collide(this.player, this.floors, destroyFloor);
@@ -196,15 +196,6 @@ Appleheels.Game.prototype = {
         }
       });
     }
-
-    // DIG by pressing the down key
-    // if (this.game.downMethod == "dig") {
-    //   if (this.cursor.down.isDown && this.player.body.touching.down || this.player.body.onFloor()) {
-    //     console.log("hello", this.game.physics.arcade.overlap(this.player, this.floor))
-    //     this.game.physics.arcade.collide(this.player, this.floors, destroyFloor, processHandler);
-    //     console.log(this.floors.children[0]);
-    //   }
-    // }
 
     // JUMP by pressing the jumpButton key
     if (this.jumpButton.isDown && this.player.body.touching.down || this.player.body.onFloor()) {

@@ -19,41 +19,77 @@ Appleheels.TerminalMenuThree.prototype = {
     color: 0xE81717
   },
 
-  getObjective: function (_currentVal) {
-    if (_currentVal == true) {
-      return Appleheels.objectives[1];
-    } else {
-      return Appleheels.objectives[0];
+  cycleObjective: function (_direction) {
+    var previousObjective;
+    if (_direction == "up") {
+      previousObjective = Appleheels.objectives.shift();
+      Appleheels.objectives.push(previousObjective);
+    } else if (_direction == "down") {
+      previousObjective = Appleheels.objectives.pop();
+      Appleheels.objectives.unshift(previousObjective);
     }
+  },
+
+  getObjective: function () {
+    return Appleheels.objectives[0];
+  },
+
+  putObjective: function () {
+    console.log(this.getObjective());
+    this.game.objective = this.getObjective();
+
+    $.ajax({
+      url: "/game/" + this.game.gameId,
+      type: "PUT",
+      data: {game_instance: { objectives: this.game.objective } },
+    });
+
+    this.state.start('Game');
   },
 
   initialObjective: function () {
     if (this.game.objectives != "") {
       return this.game.objectives
     } else {
-      return this.getObjective(0)
+      return this.getObjective()
     };
   },
 
-  init: function () {
-    this.titleText = this.add.bitmapText(0, 64, 'rollingThunder', 'Appleheels', 32);
+  drawObjectiveText: function () {
+    this.titleText                   = this.add.bitmapText (0,   64,  'rollingThunder', 'Appleheels', 32);
+    this.objectiveMenuOption         = this.add.bitmapText (0,   164, 'rollingThunder', 'Objective', 16);
+    this.objectiveSelection          = this.add.bitmapText (0,   164, 'rollingThunder', this.initialObjective(), 16);
+    this.downcycleObjectiveSelection = this.add.bitmapText (0,   164, 'rollingThunder', '<', 16);
+    this.upcycleObjectiveSelection   = this.add.bitmapText (492, 164, 'rollingThunder', '>', 16);
+
+    // Position/format titleText
     this.titleText.x = 256 - (this.titleText.textWidth / 2);
     this.titleText.tint = this.terminalText.color;
 
-    // INIT Objective attribute
-    this.objectiveAssignmentText = this.add.bitmapText (0, 164, 'rollingThunder', 'Objective', 16);
-    this.objectiveAssignmentText.x = this.margin.left;
-    this.objectiveAssignmentText.tint = this.terminalText.color;
-    this.objectiveAssignmentDisplay = this.add.bitmapText (0, 164, 'rollingThunder', this.initialObjective(), 16);
-    this.objectiveAssignmentDisplay.x = 500 - (this.objectiveAssignmentDisplay.textWidth + this.margin.right);
-    this.objectiveAssignmentDisplay.tint = this.terminalText.color;
+    // Postion/format objectiveMenuOption
+    this.objectiveMenuOption.x = this.margin.left;
+    this.objectiveMenuOption.tint = this.terminalText.color;
 
-    this.decObjectiveAssignment = this.add.bitmapText (0, 164, 'rollingThunder', '-', 16);
-    this.decObjectiveAssignment.x = this.objectiveAssignmentDisplay.x - this.margin.left;
-    this.decObjectiveAssignment.tint = this.terminalText.color;
-    this.incObjectiveAssignment = this.add.bitmapText (492, 164, 'rollingThunder', '+', 16);
-    this.incObjectiveAssignment.tint = this.terminalText.color;
+    // Position/format objectiveSelection
+    this.objectiveSelection.x = 500 - (this.objectiveSelection.textWidth + this.margin.right);
+    this.objectiveSelection.tint = this.terminalText.color;
 
+    // Position/format <
+    this.downcycleObjectiveSelection.x = this.objectiveSelection.x - this.margin.left;
+    this.downcycleObjectiveSelection.tint = this.terminalText.color;
+
+    // format >
+    this.upcycleObjectiveSelection.tint = this.terminalText.color;
+  },
+
+  redrawObjectiveText: function () {
+    this.objectiveSelection.text = this.getObjective();
+    this.objectiveSelection.x = 500 - (this.objectiveSelection.textWidth + this.margin.right);
+    this.downcycleObjectiveSelection.x = this.objectiveSelection.x - this.margin.left;
+  },
+
+  init: function () {
+    this.drawObjectiveText();
   },
 
   create: function () {
@@ -62,39 +98,20 @@ Appleheels.TerminalMenuThree.prototype = {
     this.cursor = this.input.keyboard.createCursorKeys();
     this.backButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
+    // Press UP to select previous attribute in list
+    this.cursor.up.onDown.add(function () {console.log("UP has been pressed");}, this);
+    // Press DOWN to select next attribute in list
+    this.cursor.down.onDown.add(function () {console.log("DOWN has been pressed");}, this);
+    // Press RIGHT to cycle objective (will need to be more generalized) up
+    this.cursor.right.onDown.add(function () {this.cycleObjective("up"); this.redrawObjectiveText();}, this);
+    // Press LEFT to cycle objective (will need to be more generalized) down
+    this.cursor.left.onDown.add(function () {this.cycleObjective("down"); this.redrawObjectiveText();}, this);
+    // Press ESC to put objective (will need to be more generalized) to db, and return to the game
+    this.backButton.onDown.add(function () {this.putObjective();}, this);
+
     this.game.add.existing(this.titleText);
   },
 
   update: function () {
-    // Press RIGHT or LEFT to toggle death objective
-    if (this.cursor.right.isDown || this.cursor.left.isDown) {
-      this.game.isDie = !this.game.isDie;
-      this.objectiveAssignmentDisplay.text = this.getObjective(this.game.isDie);
-      this.objectiveAssignmentDisplay.x = 500 - (this.objectiveAssignmentDisplay.textWidth + this.margin.right);
-      this.decObjectiveAssignment.x = this.objectiveAssignmentDisplay.x - this.margin.left;
-    };
-    // Press ESC to exit
-    if (this.backButton.isDown) {
-      console.log("EXIT");
-      this.game.objective = this.getObjective(this.game.isDie);
-
-      $.ajax({
-        url: "/game/" + this.game.gameId,
-        type: "PUT",
-        data: {game_instance: { objectives: this.game.objective } },
-      });
-
-      this.state.start('Game');
-    };
-
-    // Not working yet
-    // Press UP to select next attribute
-    if (this.cursor.up.isDown) {
-      console.log("UP");
-    }
-    // Press DOWN to select next attribute
-    if (this.cursor.down.isDown) {
-      console.log("DOWN");
-    }
   }
 };
