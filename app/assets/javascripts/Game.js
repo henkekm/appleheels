@@ -148,13 +148,11 @@ Appleheels.Game.prototype = {
     this.game.jumpPower = parseInt(this.game.jumpPower);
 
     // JUMP by pressing the jumpButton key
-    if (!this.gameLost) {
-      this.jumpButton.onDown.add(function () {
-        if (this.player.body.touching.down) {
-          this.player.body.velocity.y = this.getJumpPower();
-        }
-      }, this);
-    }
+    this.jumpButton.onDown.add(function () {
+      if (this.player.body.touching.down) {
+        this.player.body.velocity.y = this.getJumpPower();
+      }
+    }, this);
 
     // Place floor
     for (var _col = 0; _col < 26; _col++) {
