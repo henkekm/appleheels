@@ -3,9 +3,6 @@ Appleheels.TerminalMenuTwo = function(game) {
 
   this.cursor;
   this.backButton;
-  this.attributes;
-  this.attrFavNumber;
-  this.attrDownAssignment;
 
 };
 
@@ -22,51 +19,77 @@ Appleheels.TerminalMenuTwo.prototype = {
     color: 0xE6E817
   },
 
-  setDownAssignment: function () {
-    oldVar = Appleheels.downAssignment.shift();
-    Appleheels.downAssignment.push(oldVar);
+  cycleDownVerb: function (_direction) {
+    var previousDownVerbs;
+    if (_direction == "up") {
+      previousDownVerbs = Appleheels.downVerbs.shift();
+      Appleheels.downVerbs.push(previousDownVerbs);
+    } else if (_direction == "down") {
+      previousDownVerbs = Appleheels.downVerbs.pop();
+      Appleheels.downVerbs.unshift(previousDownVerbs);
+    }
   },
 
-  getDownAssignment: function (_currentVal) {
-    return Appleheels.downAssignment[0];
+  getDownVerb: function () {
+    return Appleheels.downVerbs[0];
+  },
+
+  putDownVerb: function () {
+    console.log(this.getDownVerb());
+    this.game.downVerb = this.getDownVerb();
+
+    $.ajax({
+      url: "/game/" + this.game.gameId,
+      type: "PUT",
+      data: {game_instance: { down_method: this.game.downVerb } },
+    });
+
+    this.state.start('Game');
   },
 
   initialDown: function () {
-    if (this.game.downMethod != "") {
-      return this.game.downMethod
+    if (this.game.downVerb != "") {
+      return this.game.downVerb;
     } else {
-      return this.getDownAssignment();
+      return this.getDownVerb();
     };
   },
 
-  init: function () {
-    this.titleText = this.add.bitmapText(0, 64, 'rollingThunder', 'Appleheels', 32);
+  drawDownVerbText: function () {
+    this.titleText                  = this.add.bitmapText (0, 64,    'rollingThunder', 'Appleheels', 32);
+    this.downVerbMenuOption         = this.add.bitmapText (0, 164,   'rollingThunder', 'Down Verb', 16);
+    this.downVerbSelection          = this.add.bitmapText (0, 164,   'rollingThunder', this.initialDown(), 16);
+    this.downcycleDownVerbSelection = this.add.bitmapText (0, 164,   'rollingThunder', '<', 16);
+    this.upcycleDownVerbSelection   = this.add.bitmapText (492, 164, 'rollingThunder', '>', 16);
+
+    // Position/format titleText
     this.titleText.x = 256 - (this.titleText.textWidth / 2);
     this.titleText.tint = this.terminalText.color;
 
-    this.attributes = [];
-    this.attrDownAssignment = [];
+    // Position/format downVerbMenuOption
+    this.downVerbMenuOption.x = this.margin.left;
+    this.downVerbMenuOption.tint = this.terminalText.color;
 
-    // INIT Down Button attribute
-    this.downAssignmentText = this.add.bitmapText (0, 164, 'rollingThunder', 'Down Assignment', 16);
-    this.downAssignmentText.x = this.margin.left;
-    this.downAssignmentText.tint = this.terminalText.color;
-    this.attrDownAssignment.push(this.downAssignmentText);
-    this.downAssignmentDisplay = this.add.bitmapText (0, 164, 'rollingThunder', this.initialDown(), 16);
-    this.downAssignmentDisplay.x = 500 - (this.downAssignmentDisplay.textWidth + this.margin.right);
-    this.downAssignmentDisplay.tint = this.terminalText.color;
-    this.attrDownAssignment.push(this.downAssignmentDisplay);
+    // Position/format downVerbSelection
+    this.downVerbSelection.x = 500 - (this.downVerbSelection.textWidth + this.margin.right);
+    this.downVerbSelection.tint = this.terminalText.color;
 
-    this.decDownAssignment = this.add.bitmapText (0, 164, 'rollingThunder', '-', 16);
-    this.decDownAssignment.x = this.downAssignmentDisplay.x - this.margin.left;
-    this.decDownAssignment.tint = this.terminalText.color;
-    this.attrDownAssignment.push(this.decDownAssignment);
-    this.incDownAssignment = this.add.bitmapText (492, 164, 'rollingThunder', '+', 16);
-    this.incDownAssignment.tint = this.terminalText.color;
-    this.attrDownAssignment.push(this.incDownAssignment);
+    // Position/format <
+    this.downcycleDownVerbSelection.x = this.downVerbSelection.x - this.margin.left;
+    this.downcycleDownVerbSelection.tint = this.terminalText.color;
 
-    this.attributes.push(this.attrDownAssignment);
-    // console.log(this.attributes[0]);
+    // format >
+    this.upcycleDownVerbSelection.tint = this.terminalText.color;
+  },
+
+  redrawDownVerbText: function () {
+    this.downVerbSelection.text = this.getDownVerb();
+    this.downVerbSelection.x = 500 - (this.downVerbSelection.textWidth + this.margin.right);
+    this.downcycleDownVerbSelection.x = this.downVerbSelection.x - this.margin.left;
+  },
+
+  init: function () {
+    this.drawDownVerbText();
   },
 
   create: function () {
@@ -75,39 +98,20 @@ Appleheels.TerminalMenuTwo.prototype = {
     this.cursor = this.input.keyboard.createCursorKeys();
     this.backButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
+    // Press UP to select previous attribute in list
+    this.cursor.up.onDown.add(function () {console.log("UP has been pressed");}, this);
+    // Press DOWN to select next attribute in list
+    this.cursor.down.onDown.add(function () {console.log("DOWN has been pressed");}, this);
+    // Press RIGHT to cycle objective (will need to be more generalized) up
+    this.cursor.right.onDown.add(function () {this.cycleDownVerb("up"); this.redrawDownVerbText();}, this);
+    // Press LEFT to cycle objective (will need to be more generalized) down
+    this.cursor.left.onDown.add(function () {this.cycleDownVerb("down"); this.redrawDownVerbText();}, this);
+    // Press ESC to put objective (will need to be more generalized) to db, and return to the game
+    this.backButton.onDown.add(function () {this.putDownVerb();}, this);
+
     this.game.add.existing (this.titleText);
   },
 
   update: function () {
-    // Press RIGHT or LEFT to toggle digging
-    if (this.cursor.right.isDown || this.cursor.left.isDown) {
-      this.setDownAssignment();
-      this.downAssignmentDisplay.text = this.getDownAssignment();
-      this.downAssignmentDisplay.x = 500 - (this.downAssignmentDisplay.textWidth + this.margin.right);
-      this.decDownAssignment.x = this.downAssignmentDisplay.x - this.margin.left;
-    };
-    // Press ESC to exit
-    if (this.backButton.isDown) {
-      console.log("EXIT");
-      this.game.downMethod = this.getDownAssignment();
-
-      $.ajax({
-        url: "/game/" + this.game.gameId,
-        type: "PUT",
-        data: {game_instance: { down_method: this.game.downMethod } },
-      });
-
-      this.state.start('Game');
-    };
-
-    // Not working yet
-    // Press UP to select next attribute
-    if (this.cursor.up.isDown) {
-      console.log("UP");
-    }
-    // Press DOWN to select next attribute
-    if (this.cursor.down.isDown) {
-      console.log("DOWN");
-    }
   }
 };
