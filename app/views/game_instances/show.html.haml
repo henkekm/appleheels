@@ -9,8 +9,6 @@
 #gamerails
 - if @game_instance.status == "won"
   = image_tag("trophy.jpg")
-- elsif @game_instance.status == "lost"
-  = image_tag("tombstone.jpg")
 - else
   #orientation
   :javascript
@@ -28,6 +26,7 @@
         game.state.start('Boot');
 
         game.gameId = "#{@game_instance.id}";
+        game.victoryStatus = "#{@game_instance.status}";
         game.jumpPower = "#{@game_instance.jump_power}";
         game.downVerb = "#{@game_instance.down_method}";
         game.objectives = "#{@game_instance.objectives}";
